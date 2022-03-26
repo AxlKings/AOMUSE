@@ -1,13 +1,13 @@
 """
-Init file for the SpatialCluster library.
+Init file for the AO Muse library.
 """
 
-version_info = (0, 0, 0)
+version_info = (0, 0, 9)
 __version__ = ".".join([str(x) for x in version_info])
 
 __all__ = [
-    "methods"
-    "preprocess"
-    "visualization"
+    "ao"
+    "db"
+    "process"
     "utils"
 ]

@@ -1,7 +1,7 @@
 import numpy as np
 from astropy.time import Time
 from astropy.coordinates import AltAz
-from aomuse.constants import location
+from AOMUSE.constants import location
 
 # Procedure to get the fwhm at an arbitrary wavelength including
 # aberrations introduced by MUSE.

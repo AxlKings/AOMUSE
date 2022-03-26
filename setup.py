@@ -7,7 +7,7 @@ from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
-VERSION = '0.0.0'
+VERSION = '0.0.9'
 DESCRIPTION = 'AO Muse package'
 
 # Setting up
@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=find_packages(),
-    install_requires=['numpy', 'pandas', 'pony', 'json', 'astropy'],
+    install_requires=['numpy', 'pandas', 'pony', 'astropy'],
     url="https://github.com/AxlKings/AOMUSE",
     keywords='python adaptative optics muse',
     license='MIT',
