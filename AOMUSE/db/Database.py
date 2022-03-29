@@ -27,9 +27,9 @@ class Exposure(database.Entity):
     prm_filename = Optional(str, unique=True)
     pampelmuse_params = Optional(Json)
     sources = Optional(Json)
-    psf_table = Optional(Json)
     pampelmuse_catalog = Optional(Json)
     raman_image_header = Optional(Json)
+    maoppy_data = Optional(Json)
 
     #   ----- Sky parameters -----
     sky_condition_start_time = Optional(float)

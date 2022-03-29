@@ -66,6 +66,10 @@ And finally grant privileges to the database user:
 GRANT ALL PRIVILEGES ON {database_name}.* TO '{username}'@'localhost';
 ```
 
+To use this library its very recommendable to use the following AO Muse script to retrieve the data from Muse files.
+
+[AO Muse Script](https://github.com/AxlKings/AOMUSE-2022-project)
+
 # Data Structure
 
 The following code cells define the structure of the database entities (Targets, Exposures and Processed Exposures) and how Pony map the classes with the tables. This structure is mandatory to use the AO Muse Package.
@@ -77,7 +81,7 @@ from pony.orm import *
 db = Database()
 
 # The classes inherit db.Entity from Pony
-class Target(database.Entity):
+class Target(db.Entity):
     #   ----- Attributes -----
 
     target_name = Required(str, unique=True)  # Required: Cannot be None
@@ -85,10 +89,10 @@ class Target(database.Entity):
     #   ----- Relations -----
 
     exposures = Set('Exposure')  # One target contains a set of exposures
-    processed_exposure = Set('Processed_Exposure')
+    processed_exposure = Optional('Processed_Exposure')
 
 # Exposure table class
-class Exposure(database.Entity):
+class Exposure(db.Entity):
     #   ----- Attributes -----
 
     observation_time = Required(datetime, unique=True)
@@ -101,9 +105,9 @@ class Exposure(database.Entity):
     prm_filename = Optional(str, unique=True)
     pampelmuse_params = Optional(Json)
     sources = Optional(Json)
-    psf_table = Optional(Json)
     pampelmuse_catalog = Optional(Json)
     raman_image_header = Optional(Json)
+    maoppy_data = Optional(Json)
 
     #   ----- Sky parameters -----
     sky_condition_start_time = Optional(float)
@@ -118,12 +122,11 @@ class Exposure(database.Entity):
     target = Required('Target')  # One exposure belongs to a target
     processed_exposure = Optional('Processed_Exposure')
 
-class Processed_Exposure(database.Entity):
+class Processed_Exposure(db.Entity):
     observation_time = Required(datetime, unique=True)
     obs_id = Required(int, size=32, unsigned=True)
     insMode = Required(str)
     raw_filename = Optional(str, unique=True)
-
     ngs_flux = Optional(float)
     ttfree = Optional(bool)
     degraded = Optional(bool)
@@ -137,7 +140,7 @@ class Processed_Exposure(database.Entity):
     sgs_data = Optional(Json) # sgs_data extension
     ag_data = Optional(Json) # ag_data extension
     sparta_cn2 = Optional(Json) # sparta_cn2 extension
-    sparta_atm = Optional(Json) # sparta_atm extension
+    sparta_atm =Optional(Json) # sparta_atm extension
     psf_params = Optional(Json)
     sparta_iq_data = Optional(Json)
     sparta_iq_los_500nm = Optional(float)
@@ -187,6 +190,9 @@ The package also offers the following methods which process exposures data or re
 ### muse_db.process()
 
 Process and store all the exposures stored in the database. If processed data existed previosly, it is deleted first.
+The processed data will be obtained by the Exposure table of the current database and will be stored in a new table (Processed_Exposure).
+
+'psf_params' and 'sparta_iq_data' fields are dictionaries (or Json) with several keys. The wavelength range has been sliced into 10 windows, where the windows that were in the laser range were skipped. For each exposure the key has an array of values, each value corresponds to the mean of the corresponding measure, indicated by the key, along the corresponding wavelenght window. Also, both fields has a key called "wavelength" that indicates the mean of the wavelength of each window not skipped.
 
 ```python
 aomuse_db.process()
@@ -201,6 +207,7 @@ exposures = aomuse_db.get_exposures()
 exposures
 ```
 <img src=https://media.discordapp.net/attachments/957192747620659250/957192761491193866/unknown.png>
+<br><br/>
 
 ### muse_db.get_processed_exposures()
 
@@ -211,6 +218,7 @@ processed_exposures = aomuse_db.get_processed_exposures()
 processed_exposures
 ```
 <img src=https://media.discordapp.net/attachments/957192747620659250/957193210072019034/unknown.png>
+<br><br/>
 
 ### muse_db.get_processed_data()
 
@@ -221,6 +229,7 @@ processed_data = aomuse_db.get_processed_data()
 processed_data
 ```
 <img src=https://media.discordapp.net/attachments/957192747620659250/957193388975869992/unknown.png>
+<br><br/>
 
 ### muse_db.get_processed_data()
 
@@ -231,3 +240,6 @@ processed_tables = aomuse_db.get_processed_tables()
 processed_tables
 ```
 <img src=https://media.discordapp.net/attachments/957192747620659250/957193565811920916/unknown.png>
+<br><br/>
+
+If there is an error with the library or with the README, like a misspelling or something, do not be afraid to send me an email to axel.reyes@sansano.usm.cl and I will try to fix it as soon as posible. Thank you in advance.
